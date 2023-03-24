@@ -1,5 +1,5 @@
 import axios from 'axios';
-import {SERVERS} from './api.servers';
+import { SERVERS } from './api.servers';
 
 const axiosDefault = axios.defaults;
 
