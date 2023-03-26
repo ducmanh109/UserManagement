@@ -1,7 +1,7 @@
 import { Button, FlatList, SafeAreaView, Text, View } from 'react-native';
 import React, { useCallback, useState } from 'react';
 import axios from 'axios';
-import { GET_NEWS_ENDPOINT } from '../../api/endpoint/news.endpoint';
+import { GET_NEWS_ENDPOINT } from 'api/endpoint/news.endpoint';
 import { observer } from 'mobx-react';
 
 const Home = () => {
