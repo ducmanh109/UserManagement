@@ -2,3 +2,13 @@ export type LOGIN_REQUEST_TYPE = {
   phone: string;
   password: string;
 };
+
+type SESSION_STATUS_TYPE = {
+  UNAUTHORIZED: 'UNAUTHORIZED';
+  AUTHORIZED: 'AUTHORIZED';
+};
+
+export const SESSION_STATUS: SESSION_STATUS_TYPE = {
+  UNAUTHORIZED: 'UNAUTHORIZED',
+  AUTHORIZED: 'AUTHORIZED',
+};
