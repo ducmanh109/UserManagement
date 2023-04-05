@@ -29,3 +29,13 @@ export type USER_TYPE = {
   authority: [];
   accessToken: string;
 };
+
+export type CREATE_USER_STATUS_TYPE = {
+  SUCCESS: 'SUCCESS';
+  FAIL: 'FAIL';
+};
+
+export const CREATE_USER_STATUS = {
+  SUCCESS: 'SUCCESS',
+  FAIL: 'FAIL',
+};

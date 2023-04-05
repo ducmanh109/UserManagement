@@ -1,37 +1,48 @@
 import { useCallback, useState } from 'react';
-import axios from 'axios';
-import { GET_NEWS_ENDPOINT } from 'api/endpoint/news.endpoint';
-import sessionStore from 'data/session/SessionStore';
+import addressMenuStore from 'data/addressMenu/AddressMenuStore';
+import userStore from 'data/userStore/UserStore';
 
 const useLogicHome = () => {
-  const [data, setData] = useState([]);
+  const [userInfo, setUserInfo] = useState({
+    firstName: '',
+    lastName: '',
+  });
+  const disableButton =
+    !userInfo.firstName ||
+    !userInfo.lastName ||
+    !addressMenuStore.selectedAddress.ward;
 
-  const getData = useCallback(async () => {
-    try {
-      const response = await axios.get(GET_NEWS_ENDPOINT);
+  const onSubmit = useCallback(() => {
+    userStore.onCreateUser({
+      ...userInfo,
+      ...addressMenuStore.selectedAddress,
+    });
+    addressMenuStore.setSelectedAddress({
+      province: '',
+      district: '',
+      ward: '',
+    });
+    setUserInfo({
+      firstName: '',
+      lastName: '',
+    });
+  }, [userInfo]);
 
-      if (!response) {
-        return;
-      }
-
-      setData(response.data);
-    } catch (error) {
-      console.log('error>>>>>', error);
-    }
-  }, []);
-
-  const onLogout = useCallback(async () => {
-    try {
-      await sessionStore.onLogout();
-    } catch (error) {
-      console.log('Logout Fail With Error', error);
-    }
-  }, []);
+  const onChangeTextInfo = useCallback(
+    (fieldValue: string) => (value: string) => {
+      setUserInfo({
+        ...userInfo,
+        [fieldValue]: value,
+      });
+    },
+    [userInfo],
+  );
 
   return {
-    data,
-    getData,
-    onLogout,
+    userInfo,
+    disableButton,
+    onChangeTextInfo,
+    onSubmit,
   };
 };
 

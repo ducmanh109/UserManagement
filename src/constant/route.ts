@@ -1,9 +1,13 @@
 type ROUTES_TYPE = {
+  MAIN_TAB: 'MAIN_TAB';
   HOME: 'HOME';
   LOGIN: 'LOGIN';
+  LIST_USER: 'LIST_USER';
 };
 
 export const ROUTES: ROUTES_TYPE = {
+  MAIN_TAB: 'MAIN_TAB',
   HOME: 'HOME',
   LOGIN: 'LOGIN',
+  LIST_USER: 'LIST_USER',
 };
