@@ -1,4 +1,3 @@
-/* eslint-disable import/default */
 import { useCallback, useEffect, useRef, useState } from 'react';
 import userStore from 'data/userStore/UserStore';
 import SelectDropdown from 'react-native-select-dropdown';
@@ -21,6 +20,8 @@ const useLogicAddressMenu = () => {
     provinceRef.current?.reset();
     districtRef.current?.reset();
     wardRef.current?.reset();
+
+    addressMenuStore.resetFilter();
   }, []);
 
   const onFocusDropdown = useCallback(
@@ -42,7 +43,7 @@ const useLogicAddressMenu = () => {
     [addressCode],
   );
 
-  const getAddressCode = useCallback((array, name) => {
+  const getAddressCode = useCallback((array: any, name: string) => {
     const addressObj = array.find((item: any) => item.name === name);
 
     setAddressCode(addressObj.code);

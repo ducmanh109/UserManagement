@@ -1,8 +1,10 @@
-import { View, Text, FlatList, RefreshControl, Button } from 'react-native';
+import { View, Text, FlatList, RefreshControl } from 'react-native';
 import React, { useCallback, useMemo } from 'react';
 import useLogicListUser from './ListUser.logic';
 import styles from './ListUser.styles';
 import AddressMenu from 'components/AddressMenu/AddressMenu';
+import { observer } from 'mobx-react';
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 const ListUser = () => {
   const { users, isLoading, getListUser } = useLogicListUser();
@@ -24,10 +26,8 @@ const ListUser = () => {
   }, [getListUser, isLoading]);
 
   return (
-    <View>
+    <SafeAreaView>
       <AddressMenu />
-
-      <Button title="Confirm" onPress={getListUser} />
 
       <View style={styles.wrapItem}>
         <Text>Full Name</Text>
@@ -45,8 +45,8 @@ const ListUser = () => {
           </View>
         )}
       />
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default ListUser;
+export default observer(ListUser);

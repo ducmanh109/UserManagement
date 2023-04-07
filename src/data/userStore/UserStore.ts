@@ -20,14 +20,17 @@ class UserStore {
     wards: [],
   };
   createUserStatus: string = '';
+  timeToRemind?: Date | null = null;
 
   constructor() {
     makeObservable(this, {
       addressData: observable,
       createUserStatus: observable,
+      timeToRemind: observable,
 
       setAddressData: action,
       setCreateUserStatus: action,
+      setTimeToRemind: action,
 
       onCreateUser: flow,
       getListProvinces: flow,
@@ -54,6 +57,10 @@ class UserStore {
     this.createUserStatus = status;
 
     console.log('this.createUserStatus', this.createUserStatus);
+  }
+
+  setTimeToRemind(time?: Date | null) {
+    this.timeToRemind = time;
   }
 
   *onCreateUser(data: any) {

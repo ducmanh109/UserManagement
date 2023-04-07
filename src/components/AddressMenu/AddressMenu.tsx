@@ -1,4 +1,3 @@
-/* eslint-disable import/default */
 import { Button, View } from 'react-native';
 import React from 'react';
 import SelectDropdown from 'react-native-select-dropdown';

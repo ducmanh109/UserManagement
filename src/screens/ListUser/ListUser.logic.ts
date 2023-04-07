@@ -9,22 +9,37 @@ const useLogicListUser = () => {
   const [isLoading, setIsLoading] = useState(false);
 
   const { province, district, ward } = addressMenuStore.selectedAddress;
-
   const getListUser = useCallback(async () => {
     setIsLoading(true);
 
     try {
-      const response =
-        province || district || ward
-          ? await userCollection
-              .where('province', '==', province)
-              .where('district', '==', district)
-              .where('ward', '==', ward)
-              .get()
-          : await userCollection.get();
+      let response: any;
       const newList: any = [];
 
-      response.forEach(user => {
+      if (!ward) {
+        response = await userCollection.get();
+      }
+
+      if (province.length > 0) {
+        response = await userCollection.where('province', '==', province).get();
+      }
+
+      if (district) {
+        response = await userCollection
+          .where('province', '==', province)
+          .where('district', '==', district)
+          .get();
+      }
+
+      if (ward) {
+        response = await userCollection
+          .where('province', '==', province)
+          .where('district', '==', district)
+          .where('ward', '==', ward)
+          .get();
+      }
+
+      response.forEach((user: any) => {
         newList.push(user.data());
       });
 
