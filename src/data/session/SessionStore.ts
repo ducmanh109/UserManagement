@@ -2,22 +2,31 @@ import { AxiosResponse } from 'axios';
 import { action, flow, makeObservable, observable } from 'mobx';
 import { SETUP_API } from '../../api/api.config';
 import { onLoginAPI } from '../../api/session/session.api';
-import { LOGIN_REQUEST_TYPE } from '../../api/session/session.type';
+import {
+  LOGIN_REQUEST_TYPE,
+  SESSION_STATUS,
+} from '../../api/session/session.type';
 import { USER_TYPE } from '../../api/user/user.type';
 
 class SessionStore {
-  accessToken: string = '';
-  session_status: string = 'AUTHORIZED';
+  accessToken: string | null = null;
+  session_status: string = SESSION_STATUS.AUTHORIZED;
 
   constructor() {
     makeObservable(this, {
       accessToken: observable,
       session_status: observable,
 
+      setAccessToken: action,
       setSessionStatus: action,
 
       onLogin: flow,
+      onLogout: flow,
     });
+  }
+
+  setAccessToken(token: string | null) {
+    this.accessToken = token;
   }
 
   setSessionStatus(status: string) {
@@ -32,13 +41,18 @@ class SessionStore {
         return;
       }
 
-      this.accessToken = loginResponse?.data?.accessToken;
+      this.setAccessToken(loginResponse?.data?.accessToken);
       this.setSessionStatus('AUTHORIZED');
 
       SETUP_API.setHeaderToken(loginResponse?.data?.accessToken);
     } catch (error) {
       console.log('Login Fail With Error -->', error);
     }
+  }
+
+  *onLogout() {
+    this.setAccessToken(null);
+    this.setSessionStatus(SESSION_STATUS.UNAUTHORIZED);
   }
 }
 

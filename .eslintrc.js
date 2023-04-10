@@ -50,5 +50,6 @@ module.exports = {
     'react-native/no-single-element-style-arrays': 'error',
     'no-useless-rename': 'error',
     'object-shorthand': ['error', 'always'],
+    'import/default': 'off',
   },
 };

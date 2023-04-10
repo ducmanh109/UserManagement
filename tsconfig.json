@@ -15,7 +15,8 @@
     },
     "allowSyntheticDefaultImports": true,
     "esModuleInterop": true,
-    "skipLibCheck": false
+    "skipLibCheck": false,
+    "resolveJsonModule": true
   },
   "exclude": [
     "node_modules",
