@@ -13,6 +13,7 @@ const useLogicHome = () => {
     lastName: '',
     phoneNumber: '',
     detailAddress: '',
+    repeatType: '',
   });
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
@@ -55,6 +56,7 @@ const useLogicHome = () => {
       lastName: '',
       phoneNumber: '',
       detailAddress: '',
+      repeatType: '',
     });
     setSelectedDate(date);
     userStore.setTimeToRemind(null);
@@ -70,12 +72,12 @@ const useLogicHome = () => {
     [userInfo],
   );
 
-  const onShowDatePicker = useCallback((isShow: boolean) => {
-    setShowDatePicker(isShow);
+  const onShowDatePicker = useCallback(() => {
+    setShowDatePicker(value => !value);
   }, []);
 
-  const onShowTimePicker = useCallback((isShow: boolean) => {
-    setShowTimePicker(isShow);
+  const onShowTimePicker = useCallback(() => {
+    setShowTimePicker(value => !value);
   }, []);
 
   const onChangeDatePicker = (event: DateTimePickerEvent, date?: Date) => {
@@ -88,6 +90,37 @@ const useLogicHome = () => {
 
     setShowTimePicker(false);
   };
+
+  const getRepeatType = useCallback((index: number) => {
+    switch (index) {
+      case 0:
+        notificationService.setRepeatType('week');
+        break;
+      case 1:
+        notificationService.setRepeatType('day');
+        break;
+      case 2:
+        notificationService.setRepeatType('hour');
+        break;
+      case 3:
+        notificationService.setRepeatType('minute');
+        break;
+      default:
+        break;
+    }
+  }, []);
+
+  const onSelectRepeatType = useCallback(
+    (selectedItem: string, index: number) => {
+      getRepeatType(index);
+
+      setUserInfo({
+        ...userInfo,
+        repeatType: selectedItem,
+      });
+    },
+    [getRepeatType, userInfo],
+  );
 
   return {
     userInfo,
@@ -104,6 +137,7 @@ const useLogicHome = () => {
     onShowTimePicker,
     onChangeDatePicker,
     onChangeTimePicker,
+    onSelectRepeatType,
   };
 };
 

@@ -3,8 +3,14 @@ import userStore from 'data/userStore/UserStore';
 import SelectDropdown from 'react-native-select-dropdown';
 import { AddressType } from 'data/address/address.type';
 import addressMenuStore from 'data/addressMenu/AddressMenuStore';
+import { ScrollView } from 'react-native';
+import CommonWidths from 'theme/CommonWidths';
 
+//TODO fix bug when onFocusDropdown after selected value
 const useLogicAddressMenu = () => {
+  const [fieldIsFocusing, setFieldIsFocusing] = useState('');
+  const [addressCode, setAddressCode] = useState('');
+
   const addressData = userStore?.addressData;
   const listProvinces = addressData?.provinces?.map(item => item.name);
   const listDistricts = addressData?.districts?.map(item => item.name);
@@ -13,10 +19,23 @@ const useLogicAddressMenu = () => {
   const provinceRef = useRef<SelectDropdown>(null);
   const districtRef = useRef<SelectDropdown>(null);
   const wardRef = useRef<SelectDropdown>(null);
+  const scrollViewRef = useRef<ScrollView>(null);
 
-  const [addressCode, setAddressCode] = useState('');
+  const onResetAddress = useCallback((type?: AddressType) => {
+    if (type === 'ward') {
+      wardRef.current?.reset();
+      addressMenuStore.resetFilter(type);
 
-  const onResetAddress = useCallback(() => {
+      return;
+    }
+    if (type === 'district') {
+      districtRef.current?.reset();
+      wardRef.current?.reset();
+      addressMenuStore.resetFilter(type);
+
+      return;
+    }
+
     provinceRef.current?.reset();
     districtRef.current?.reset();
     wardRef.current?.reset();
@@ -26,14 +45,35 @@ const useLogicAddressMenu = () => {
 
   const onFocusDropdown = useCallback(
     (type: AddressType) => {
+      setFieldIsFocusing(type);
+
       switch (type) {
         case 'province':
+          scrollViewRef?.current?.scrollTo({
+            x: 0,
+            y: 0,
+            animated: true,
+          });
+
           userStore.getListProvinces();
           break;
         case 'district':
+          scrollViewRef?.current?.scrollTo({
+            x: CommonWidths.windowWidth - 130 * 2,
+            y: 0,
+            animated: true,
+          });
+
           userStore.getListDistricts(addressCode);
+
           break;
         case 'ward':
+          scrollViewRef?.current?.scrollTo({
+            x: CommonWidths.windowWidth,
+            y: 0,
+            animated: true,
+          });
+
           userStore.getListWards(addressCode);
           break;
         default:
@@ -42,6 +82,10 @@ const useLogicAddressMenu = () => {
     },
     [addressCode],
   );
+
+  const onBlurDropdown = useCallback(() => {
+    setFieldIsFocusing('');
+  }, []);
 
   const getAddressCode = useCallback((array: any, name: string) => {
     const addressObj = array.find((item: any) => item.name === name);
@@ -64,6 +108,12 @@ const useLogicAddressMenu = () => {
           });
 
           getAddressCode(userStore.addressData.provinces, selectedItem);
+
+          scrollViewRef?.current?.scrollTo({
+            x: CommonWidths.windowWidth - 130 * 2,
+            y: 0,
+            animated: true,
+          });
           break;
 
         case 'district':
@@ -76,6 +126,12 @@ const useLogicAddressMenu = () => {
             district: selectedItem,
           });
           getAddressCode(userStore.addressData.districts, selectedItem);
+
+          scrollViewRef?.current?.scrollTo({
+            x: CommonWidths.windowWidth,
+            y: 0,
+            animated: true,
+          });
           break;
 
         case 'ward':
@@ -103,9 +159,12 @@ const useLogicAddressMenu = () => {
     provinceRef,
     districtRef,
     wardRef,
+    fieldIsFocusing,
+    scrollViewRef,
     onFocusDropdown,
     onSelectAddress,
     onResetAddress,
+    onBlurDropdown,
   };
 };
 

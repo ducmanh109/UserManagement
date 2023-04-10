@@ -1,3 +1,5 @@
+import { RepeatType } from 'services/NotificaionService';
+
 export type GENDER = 'male' | 'female';
 
 export type USER_TYPE = {
@@ -38,4 +40,16 @@ export type CREATE_USER_STATUS_TYPE = {
 export const CREATE_USER_STATUS = {
   SUCCESS: 'SUCCESS',
   FAIL: 'FAIL',
+};
+
+export type USER_INFO_TYPE = {
+  detailAddress: string;
+  district: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
+  province: string;
+  repeatType: RepeatType;
+  timeToRemind: string;
+  ward: string;
 };

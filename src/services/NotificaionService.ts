@@ -3,7 +3,17 @@ import PushNotification from 'react-native-push-notification';
 import { Platform } from 'react-native';
 import PushNotificationIOS from '@react-native-community/push-notification-ios';
 
+export type RepeatType =
+  | 'week'
+  | 'day'
+  | 'hour'
+  | 'minute'
+  | 'time'
+  | undefined;
+
 class NotificationService {
+  repeatType?: RepeatType = 'day';
+
   constructor() {
     // Must be outside of any component LifeCycle (such as `componentDidMount`).
     PushNotification.configure({
@@ -35,6 +45,10 @@ class NotificationService {
     });
   }
 
+  setRepeatType(repeatType?: RepeatType) {
+    this.repeatType = repeatType;
+  }
+
   scheduleNotifications({
     title,
     message,
@@ -45,7 +59,6 @@ class NotificationService {
     if (Platform.OS === 'android') {
       const remindTime =
         userStore?.timeToRemind && userStore?.timeToRemind?.getTime();
-
       PushNotification.localNotificationSchedule({
         channelId: 'reminders',
         title,
@@ -55,9 +68,9 @@ class NotificationService {
         priority: 'max',
         importance: 'max',
         playSound: true,
+        repeatType: this.repeatType,
       });
     }
-
     PushNotificationIOS.addNotificationRequest({
       id: 'reminders',
       title,

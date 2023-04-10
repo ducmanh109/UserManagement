@@ -1,3 +1,4 @@
+import { AddressType } from 'data/address/address.type';
 import { action, makeObservable, observable } from 'mobx';
 
 class AddressMenuStore {
@@ -31,7 +32,17 @@ class AddressMenuStore {
     this.isResetAddress = value;
   }
 
-  resetFilter() {
+  resetFilter(type?: AddressType) {
+    if (type === 'ward') {
+      this.selectedAddress.ward = '';
+      return;
+    }
+    if (type === 'district') {
+      this.selectedAddress.district = '';
+      this.selectedAddress.ward = '';
+      return;
+    }
+
     this.selectedAddress.province = '';
     this.selectedAddress.district = '';
     this.selectedAddress.ward = '';

@@ -1,10 +1,11 @@
-/* eslint-disable react-native/no-inline-styles */
 import {
-  Button,
+  Pressable,
   SafeAreaView,
+  ScrollView,
   Text,
   TextInput,
   TouchableOpacity,
+  View,
 } from 'react-native';
 import React from 'react';
 import { observer } from 'mobx-react';
@@ -12,7 +13,10 @@ import styles from './Home.styles';
 import useLogicHome from './Home.logic';
 import AddressMenu from 'components/AddressMenu/AddressMenu';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
-import notificationService from 'services/NotificaionService';
+import CommonStyles from 'theme/CommonStyles';
+import Colors from 'theme/colors';
+import SelectDropdown from 'react-native-select-dropdown';
+import { repeatNotificationType } from 'data/user/user.mockData';
 
 const Home = () => {
   const {
@@ -30,94 +34,104 @@ const Home = () => {
     onShowTimePicker,
     onChangeDatePicker,
     onChangeTimePicker,
+    onSelectRepeatType,
   } = useLogicHome();
 
   return (
-    <SafeAreaView>
-      <Text>Form User</Text>
+    <SafeAreaView style={CommonStyles.container}>
+      <View style={styles.container}>
+        <Text style={styles.txtTitle}>Thông tin khách hàng</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="First Name"
-        onChangeText={onChangeTextInfo('firstName')}
-        value={userInfo.firstName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Last Name"
-        onChangeText={onChangeTextInfo('lastName')}
-        value={userInfo.lastName}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Phone"
-        onChangeText={onChangeTextInfo('phoneNumber')}
-        value={userInfo.phoneNumber}
-        keyboardType="numeric"
-      />
+        <ScrollView style={styles.wrapForm}>
+          <TextInput
+            style={styles.input}
+            placeholder="Họ"
+            onChangeText={onChangeTextInfo('firstName')}
+            value={userInfo.firstName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Tên đệm & tên"
+            onChangeText={onChangeTextInfo('lastName')}
+            value={userInfo.lastName}
+          />
+          <TextInput
+            style={styles.input}
+            placeholder="Số điện thoại"
+            onChangeText={onChangeTextInfo('phoneNumber')}
+            value={userInfo.phoneNumber}
+            keyboardType="numeric"
+          />
 
-      <AddressMenu />
+          <AddressMenu canResetAddress={false} />
 
-      <TouchableOpacity
-        style={{
-          width: '100%',
-          paddingVertical: 5,
-          borderWidth: 1,
-          marginVertical: 20,
-        }}
-        onPress={() => onShowDatePicker(true)}>
-        <Text>{formatSelectedDate}</Text>
-      </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Địa chỉ cụ thể, số nhà, tên đường,..."
+            onChangeText={onChangeTextInfo('detailAddress')}
+            value={userInfo.detailAddress}
+          />
 
-      <TouchableOpacity
-        style={{
-          width: '100%',
-          paddingVertical: 5,
-          borderWidth: 1,
-        }}
-        onPress={() => onShowTimePicker(true)}>
-        <Text>{formatSelectedTime}</Text>
-      </TouchableOpacity>
+          {/* date,time picker,repeat type */}
+          <View style={styles.wrapDateTime}>
+            <TouchableOpacity
+              style={styles.btnDatePicker}
+              onPress={onShowDatePicker}>
+              <Text>{formatSelectedDate}</Text>
+            </TouchableOpacity>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Detail Address"
-        onChangeText={onChangeTextInfo('detailAddress')}
-        value={userInfo.detailAddress}
-      />
+            <TouchableOpacity
+              style={styles.btnDatePicker}
+              onPress={onShowTimePicker}>
+              <Text>{formatSelectedTime}</Text>
+            </TouchableOpacity>
 
-      <Button
-        disabled={disableSubmitBtn}
-        title="Submit"
-        onPress={onSubmit}
-        color={disableSubmitBtn ? 'grey' : 'blue'}
-      />
+            <SelectDropdown
+              data={repeatNotificationType}
+              onSelect={onSelectRepeatType}
+              buttonStyle={styles.btnDatePicker}
+              defaultButtonText="Lịch nhắc"
+              buttonTextStyle={styles.txtTypeRepeat}
+            />
+          </View>
 
-      <Button
-        title="Send Noti"
-        onPress={() =>
-          notificationService.scheduleNotifications({
-            title: 'hehe',
-            message: 'abc',
-          })
-        }
-      />
+          {showDatePicker && (
+            <RNDateTimePicker
+              value={selectedDate}
+              mode="date"
+              onChange={onChangeDatePicker}
+              display="spinner"
+            />
+          )}
 
-      {showDatePicker && (
-        <RNDateTimePicker
-          value={selectedDate}
-          mode="date"
-          onChange={onChangeDatePicker}
-        />
-      )}
+          {showTimePicker && (
+            <RNDateTimePicker
+              value={defaultTimePicker}
+              mode="time"
+              onChange={onChangeTimePicker}
+              display="spinner"
+            />
+          )}
 
-      {showTimePicker && (
-        <RNDateTimePicker
-          value={defaultTimePicker}
-          mode="time"
-          onChange={onChangeTimePicker}
-        />
-      )}
+          <Pressable
+            disabled={disableSubmitBtn}
+            onPress={onSubmit}
+            style={{
+              ...styles.btnSubmit,
+              backgroundColor: disableSubmitBtn
+                ? Colors.disabled
+                : Colors.mainColor,
+            }}>
+            <Text
+              style={{
+                ...styles.txtSubmit,
+                color: disableSubmitBtn ? Colors.black : Colors.white,
+              }}>
+              Tạo
+            </Text>
+          </Pressable>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 };

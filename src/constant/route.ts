@@ -3,6 +3,7 @@ type ROUTES_TYPE = {
   HOME: 'HOME';
   LOGIN: 'LOGIN';
   LIST_USER: 'LIST_USER';
+  USER_DETAIL: 'USER_DETAIL';
 };
 
 export const ROUTES: ROUTES_TYPE = {
@@ -10,4 +11,5 @@ export const ROUTES: ROUTES_TYPE = {
   HOME: 'HOME',
   LOGIN: 'LOGIN',
   LIST_USER: 'LIST_USER',
+  USER_DETAIL: 'USER_DETAIL',
 };
