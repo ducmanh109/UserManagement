@@ -1,3 +1,4 @@
+import { FirebaseFirestoreTypes } from '@react-native-firebase/firestore';
 import { RepeatType } from 'services/NotificaionService';
 
 export type GENDER = 'male' | 'female';
@@ -45,11 +46,14 @@ export const CREATE_USER_STATUS = {
 export type USER_INFO_TYPE = {
   detailAddress: string;
   district: string;
-  firstName: string;
-  lastName: string;
+  name: string;
   phoneNumber: string;
   province: string;
   repeatType: RepeatType;
-  timeToRemind: string;
+  timeToRemind: FirebaseFirestoreTypes.Timestamp;
   ward: string;
+  id: string;
+  scheduledTime: any; // for local schedule push
+  time_maintain: string;
+  note: string;
 };

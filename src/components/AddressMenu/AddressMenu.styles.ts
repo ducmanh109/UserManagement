@@ -10,11 +10,11 @@ const styles = StyleSheet.create({
     marginBottom: CommonHeights.res16,
   },
   btnDropdown: {
-    borderRadius: 30,
+    // borderRadius: 30,
     height: CommonHeights.res30,
     borderWidth: 1,
     borderColor: Colors.border,
-    marginRight: CommonWidths.res10,
+    marginVertical: 8,
   },
   txtSelected: {
     color: Colors.black,

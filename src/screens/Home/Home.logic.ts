@@ -1,48 +1,83 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import addressMenuStore from 'data/addressMenu/AddressMenuStore';
 import userStore from 'data/userStore/UserStore';
 import { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { format } from 'date-fns';
 import notificationService from 'services/NotificaionService';
-
-const date = new Date();
+import PushNotification from 'react-native-push-notification';
+import { useNavigation } from '@react-navigation/native';
+import { ROUTES } from 'constant/route';
+import listUserStore from 'data/userStore/ListUserStore';
 
 const useLogicHome = () => {
+  const navigation = useNavigation();
   const [userInfo, setUserInfo] = useState({
-    firstName: '',
-    lastName: '',
+    name: '',
     phoneNumber: '',
     detailAddress: '',
-    repeatType: '',
+    repeatType: 'month',
+    timeToRemind: new Date(),
+    time_maintain: '0',
+    note: '',
+    id: null,
   });
+  const selectedDate = userInfo.timeToRemind;
+  console.log('userInfouserInfo', userInfo);
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [showTimePicker, setShowTimePicker] = useState(false);
-  const [selectedDate, setSelectedDate] = useState(date);
 
-  const defaultTimePicker = selectedDate ?? date;
+  useEffect(() => {
+    // PushNotificationIOS.removeAllPendingNotificationRequests();
+    PushNotification.configure({
+      // (optional) Called when Token is generated (iOS and Android)
+      onRegister: token => {
+        console.log('NOTIFICATION TOKEN:', token);
+      },
+
+      // (required) Called when a remote is received or opened, or local notification is opened
+      onNotification: notification => {
+        console.log('OPEN NOTIFICATION:', notification);
+        navigation.navigate(
+          ROUTES.USER_DETAIL as never,
+          {
+            item: notification.data,
+          } as never,
+        );
+      },
+
+      popInitialNotification: true,
+      requestPermissions: true,
+      permissions: { alert: true, badge: true, sound: true },
+    });
+
+    PushNotification.createChannel(
+      {
+        channelId: 'reminders',
+        channelName: 'Task reminder notifications',
+        channelDescription: 'Reminder for any tasks',
+      },
+      () => {},
+    );
+
+    listUserStore.onGetListUser();
+  }, [navigation]);
+
+  const defaultTimePicker = selectedDate ?? new Date();
   const formatSelectedDate = format(selectedDate, 'dd/MM/yyyy');
   const formatSelectedTime =
-    (userStore?.timeToRemind &&
-      format(userStore?.timeToRemind as Date, 'HH:mm')) ??
-    '--:--';
+    (selectedDate && format(selectedDate as Date, 'HH:mm')) ?? '--:--';
 
   const disableSubmitBtn =
-    !userInfo ||
-    !userInfo.lastName ||
+    !userInfo.name ||
     !userInfo.detailAddress ||
     !addressMenuStore.selectedAddress.ward ||
-    !userStore?.timeToRemind;
+    !selectedDate;
 
   const onSubmit = useCallback(() => {
     userStore.onCreateUser({
       ...userInfo,
       ...addressMenuStore.selectedAddress,
-      timeToRemind: userStore?.timeToRemind,
-    });
-
-    notificationService.scheduleNotifications({
-      title: `${userInfo.firstName} ${userInfo.lastName}`,
-      message: userInfo.phoneNumber,
+      timeToRemind: selectedDate,
     });
 
     //reset form after create user
@@ -52,18 +87,16 @@ const useLogicHome = () => {
       ward: '',
     });
     setUserInfo({
-      firstName: '',
-      lastName: '',
+      name: '',
       phoneNumber: '',
       detailAddress: '',
-      repeatType: '',
+      repeatType: 'month',
+      timeToRemind: new Date(),
     });
-    setSelectedDate(date);
-    userStore.setTimeToRemind(null);
-  }, [userInfo]);
+  }, [selectedDate, userInfo]);
 
   const onChangeTextInfo = useCallback(
-    (fieldValue: string) => (value: string) => {
+    (fieldValue: string) => (value?: string | Date) => {
       setUserInfo({
         ...userInfo,
         [fieldValue]: value,
@@ -81,45 +114,29 @@ const useLogicHome = () => {
   }, []);
 
   const onChangeDatePicker = (event: DateTimePickerEvent, date?: Date) => {
-    setSelectedDate(date as any);
-    setShowDatePicker(false);
+    onChangeTextInfo('timeToRemind')(date);
   };
 
   const onChangeTimePicker = (event: DateTimePickerEvent, date?: Date) => {
-    userStore.setTimeToRemind(date);
+    console.log('date', date);
+  };
 
+  const onClosePickTime = () => {
+    setShowDatePicker(false);
     setShowTimePicker(false);
   };
 
-  const getRepeatType = useCallback((index: number) => {
-    switch (index) {
-      case 0:
-        notificationService.setRepeatType('week');
-        break;
-      case 1:
-        notificationService.setRepeatType('day');
-        break;
-      case 2:
-        notificationService.setRepeatType('hour');
-        break;
-      case 3:
-        notificationService.setRepeatType('minute');
-        break;
-      default:
-        break;
-    }
-  }, []);
-
   const onSelectRepeatType = useCallback(
-    (selectedItem: string, index: number) => {
-      getRepeatType(index);
+    (selectedItem: any) => {
+      console.log('onSelectRepeatType zxc', selectedItem);
+      notificationService.setRepeatType(selectedItem.value);
 
       setUserInfo({
         ...userInfo,
-        repeatType: selectedItem,
+        repeatType: selectedItem.value,
       });
     },
-    [getRepeatType, userInfo],
+    [userInfo],
   );
 
   return {
@@ -138,6 +155,7 @@ const useLogicHome = () => {
     onChangeDatePicker,
     onChangeTimePicker,
     onSelectRepeatType,
+    onClosePickTime,
   };
 };
 

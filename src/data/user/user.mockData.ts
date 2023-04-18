@@ -3,16 +3,13 @@ export const repeatNotificationType = [
   'Hàng ngày',
   'Hàng giờ',
   'Hàng phút',
+  'Hàng tháng',
 ];
 
 export const userRowInfo = [
   {
-    leftInfo: 'Họ',
-    rightKey: 'firstName',
-  },
-  {
     leftInfo: 'Tên',
-    rightKey: 'lastName',
+    rightKey: 'name',
   },
   {
     leftInfo: 'Số điện thoại',

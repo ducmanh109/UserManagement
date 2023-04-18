@@ -8,6 +8,7 @@ const styles = StyleSheet.create({
   container: {
     padding: 16,
     backgroundColor: Colors.white,
+    flex: 1,
   },
   wrapForm: {
     backgroundColor: Colors.white,
@@ -19,6 +20,7 @@ const styles = StyleSheet.create({
     color: Colors.black,
     marginBottom: CommonHeights.res16,
   },
+  title: { fontSize: 16, fontWeight: '500', marginTop: 10 },
   input: {
     width: '100%',
     height: CommonHeights.res40,
@@ -26,6 +28,17 @@ const styles = StyleSheet.create({
     borderColor: Colors.border,
     marginBottom: 10,
     paddingHorizontal: CommonWidths.res8,
+    color: Colors.black,
+    fontSize: CommonFonts.res14,
+  },
+  inputArea: {
+    width: '100%',
+    minHeight: CommonHeights.res40,
+    maxHeight: CommonHeights.res140,
+    borderWidth: 1,
+    borderColor: Colors.border,
+    marginBottom: 10,
+    padding: CommonWidths.res8,
     color: Colors.black,
     fontSize: CommonFonts.res14,
   },

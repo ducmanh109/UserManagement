@@ -1,4 +1,4 @@
-import { Pressable, ScrollView, Text, View } from 'react-native';
+import { Pressable, Text, View } from 'react-native';
 import React, { useCallback } from 'react';
 import SelectDropdown from 'react-native-select-dropdown';
 import { observer } from 'mobx-react';
@@ -22,11 +22,12 @@ const AddressMenu: React.FC<PropsType> = ({ canResetAddress }) => {
     districtRef,
     wardRef,
     fieldIsFocusing,
-    scrollViewRef,
     onFocusDropdown,
     onSelectAddress,
     onResetAddress,
     onBlurDropdown,
+    isShowFilter,
+    onToggleIsShowFilter,
   } = useLogicAddressMenu();
 
   const renderSearchInputRightIcon = useCallback(
@@ -44,83 +45,106 @@ const AddressMenu: React.FC<PropsType> = ({ canResetAddress }) => {
 
   return (
     <View>
-      <ScrollView
+      {/* <ScrollView
         ref={scrollViewRef}
         horizontal
         showsHorizontalScrollIndicator={false}
-        contentContainerStyle={styles.container}>
-        <SelectDropdown
-          ref={provinceRef}
-          data={listProvinces}
-          onSelect={(selectedItem: string) =>
-            onSelectAddress('province', selectedItem)
-          }
-          onFocus={() => onFocusDropdown('province')}
-          onBlur={onBlurDropdown}
-          search
-          defaultButtonText="Thành phố/Tỉnh"
-          buttonStyle={{
-            ...styles.btnDropdown,
-            backgroundColor:
-              fieldIsFocusing === 'province'
-                ? Colors.mainColor
-                : Colors.coldLight,
-          }}
-          buttonTextStyle={styles.txtSelected}
-          renderSearchInputRightIcon={() =>
-            renderSearchInputRightIcon('province')
-          }
-        />
+        contentContainerStyle={styles.container}> */}
+      {isShowFilter ? (
+        <>
+          <SelectDropdown
+            ref={provinceRef}
+            data={listProvinces}
+            onSelect={(selectedItem: string) =>
+              onSelectAddress('province', selectedItem)
+            }
+            onFocus={() => onFocusDropdown('province')}
+            onBlur={onBlurDropdown}
+            search
+            defaultButtonText="Thành phố/Tỉnh"
+            buttonStyle={{
+              ...styles.btnDropdown,
+              backgroundColor:
+                fieldIsFocusing === 'province'
+                  ? Colors.mainColor
+                  : Colors.coldLight,
+            }}
+            buttonTextStyle={styles.txtSelected}
+            renderSearchInputRightIcon={() =>
+              renderSearchInputRightIcon('province')
+            }
+          />
 
-        <SelectDropdown
-          ref={districtRef}
-          data={listDistricts}
-          onSelect={(selectedItem: string) =>
-            onSelectAddress('district', selectedItem)
-          }
-          onFocus={() => onFocusDropdown('district')}
-          onBlur={onBlurDropdown}
-          search
-          disabled={!addressMenuStore.selectedAddress.province}
-          defaultButtonText="Quận/Huyện"
-          buttonStyle={{
-            ...styles.btnDropdown,
-            backgroundColor:
-              fieldIsFocusing === 'district'
-                ? Colors.mainColor
-                : Colors.coldLight,
-          }}
-          buttonTextStyle={styles.txtSelected}
-          renderSearchInputRightIcon={() =>
-            renderSearchInputRightIcon('district')
-          }
-        />
+          <SelectDropdown
+            ref={districtRef}
+            data={listDistricts}
+            onSelect={(selectedItem: string) =>
+              onSelectAddress('district', selectedItem)
+            }
+            onFocus={() => onFocusDropdown('district')}
+            onBlur={onBlurDropdown}
+            search
+            disabled={!addressMenuStore.selectedAddress.province}
+            defaultButtonText="Quận/Huyện"
+            buttonStyle={{
+              ...styles.btnDropdown,
+              backgroundColor:
+                fieldIsFocusing === 'district'
+                  ? Colors.mainColor
+                  : Colors.coldLight,
+            }}
+            buttonTextStyle={styles.txtSelected}
+            renderSearchInputRightIcon={() =>
+              renderSearchInputRightIcon('district')
+            }
+          />
 
-        <SelectDropdown
-          ref={wardRef}
-          data={listWards}
-          onSelect={(selectedItem: string) =>
-            onSelectAddress('ward', selectedItem)
-          }
-          onFocus={() => onFocusDropdown('ward')}
-          onBlur={onBlurDropdown}
-          search
-          disabled={!addressMenuStore.selectedAddress.district}
-          defaultButtonText="Phường/Xã"
-          buttonStyle={{
-            ...styles.btnDropdown,
-            backgroundColor:
-              fieldIsFocusing === 'ward' ? Colors.mainColor : Colors.coldLight,
-          }}
-          buttonTextStyle={styles.txtSelected}
-          renderSearchInputRightIcon={() => renderSearchInputRightIcon('ward')}
-        />
-      </ScrollView>
-      {canResetAddress && (
-        <Pressable style={styles.btnReset} onPress={() => onResetAddress()}>
-          <Text style={styles.txtReset}>Đặt lại</Text>
-        </Pressable>
+          <SelectDropdown
+            ref={wardRef}
+            data={listWards}
+            onSelect={(selectedItem: string) =>
+              onSelectAddress('ward', selectedItem)
+            }
+            onFocus={() => onFocusDropdown('ward')}
+            onBlur={onBlurDropdown}
+            search
+            disabled={!addressMenuStore.selectedAddress.district}
+            defaultButtonText="Phường/Xã"
+            buttonStyle={{
+              ...styles.btnDropdown,
+              backgroundColor:
+                fieldIsFocusing === 'ward'
+                  ? Colors.mainColor
+                  : Colors.coldLight,
+            }}
+            buttonTextStyle={styles.txtSelected}
+            renderSearchInputRightIcon={() =>
+              renderSearchInputRightIcon('ward')
+            }
+          />
+        </>
+      ) : (
+        <>
+          <Text>{`${addressMenuStore.selectedAddress.ward}, ${addressMenuStore.selectedAddress.district}, ${addressMenuStore.selectedAddress.province}`}</Text>
+          <Pressable style={styles.btnReset} onPress={onToggleIsShowFilter}>
+            <Text>Mở</Text>
+          </Pressable>
+        </>
       )}
+      {/* </ScrollView> */}
+      <View style={{ flexDirection: 'row' }}>
+        {canResetAddress && (
+          <Pressable style={styles.btnReset} onPress={() => onResetAddress()}>
+            <Text style={styles.txtReset}>Đặt lại</Text>
+          </Pressable>
+        )}
+
+        {isShowFilter && (
+          <Pressable style={styles.btnReset} onPress={onToggleIsShowFilter}>
+            <Text>Đóng</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
   );
 };

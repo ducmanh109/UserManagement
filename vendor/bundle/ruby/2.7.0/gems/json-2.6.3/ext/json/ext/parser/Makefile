@@ -12,12 +12,12 @@ NULLCMD = :
 #### Start of system configuration section. ####
 
 srcdir = .
-topdir = /Users/ducmanh/.rvm/rubies/ruby-2.7.6/include/ruby-2.7.0
+topdir = /Users/duyduy/.rvm/rubies/ruby-2.7.6/include/ruby-2.7.0
 hdrdir = $(topdir)
-arch_hdrdir = /Users/ducmanh/.rvm/rubies/ruby-2.7.6/include/ruby-2.7.0/arm64-darwin22
+arch_hdrdir = /Users/duyduy/.rvm/rubies/ruby-2.7.6/include/ruby-2.7.0/arm64-darwin21
 PATH_SEPARATOR = :
 VPATH = $(srcdir):$(arch_hdrdir)/ruby:$(hdrdir)/ruby
-prefix = $(DESTDIR)/Users/ducmanh/.rvm/rubies/ruby-2.7.6
+prefix = $(DESTDIR)/Users/duyduy/.rvm/rubies/ruby-2.7.6
 rubysitearchprefix = $(rubylibprefix)/$(sitearch)
 rubyarchprefix = $(rubylibprefix)/$(arch)
 rubylibprefix = $(libdir)/$(RUBY_BASE_NAME)
@@ -31,8 +31,8 @@ rubyhdrdir = $(includedir)/$(RUBY_VERSION_NAME)
 vendorarchdir = $(vendorlibdir)/$(sitearch)
 vendorlibdir = $(vendordir)/$(ruby_version)
 vendordir = $(rubylibprefix)/vendor_ruby
-sitearchdir = $(DESTDIR)./.gem.20230323-67710-itdn3t
-sitelibdir = $(DESTDIR)./.gem.20230323-67710-itdn3t
+sitearchdir = $(DESTDIR)./.gem.20230410-56679-1hm83vr
+sitelibdir = $(DESTDIR)./.gem.20230410-56679-1hm83vr
 sitedir = $(rubylibprefix)/site_ruby
 rubyarchdir = $(rubylibdir)/$(arch)
 rubylibdir = $(rubylibprefix)/$(ruby_version)
@@ -105,7 +105,7 @@ RUBY_VERSION_NAME = $(RUBY_BASE_NAME)-$(ruby_version)
 RUBYW_BASE_NAME = rubyw
 RUBY_BASE_NAME = ruby
 
-arch = arm64-darwin22
+arch = arm64-darwin21
 sitearch = $(arch)
 ruby_version = 2.7.0
 ruby = $(bindir)/$(RUBY_BASE_NAME)

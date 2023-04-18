@@ -5,11 +5,13 @@ import { AddressType } from 'data/address/address.type';
 import addressMenuStore from 'data/addressMenu/AddressMenuStore';
 import { ScrollView } from 'react-native';
 import CommonWidths from 'theme/CommonWidths';
+// import listUserStore from 'data/userStore/ListUserStore';
 
 //TODO fix bug when onFocusDropdown after selected value
 const useLogicAddressMenu = () => {
   const [fieldIsFocusing, setFieldIsFocusing] = useState('');
   const [addressCode, setAddressCode] = useState('');
+  const [isShowFilter, setShowFilter] = useState(false);
 
   const addressData = userStore?.addressData;
   const listProvinces = addressData?.provinces?.map(item => item.name);
@@ -20,6 +22,10 @@ const useLogicAddressMenu = () => {
   const districtRef = useRef<SelectDropdown>(null);
   const wardRef = useRef<SelectDropdown>(null);
   const scrollViewRef = useRef<ScrollView>(null);
+
+  const onToggleIsShowFilter = useCallback(() => {
+    setShowFilter(value => !value);
+  }, []);
 
   const onResetAddress = useCallback((type?: AddressType) => {
     if (type === 'ward') {
@@ -41,6 +47,7 @@ const useLogicAddressMenu = () => {
     wardRef.current?.reset();
 
     addressMenuStore.resetFilter();
+    // listUserStore.onGetListUser();
   }, []);
 
   const onFocusDropdown = useCallback(
@@ -144,6 +151,8 @@ const useLogicAddressMenu = () => {
         default:
           break;
       }
+
+      // listUserStore.onGetListUser();
     },
     [getAddressCode],
   );
@@ -165,6 +174,8 @@ const useLogicAddressMenu = () => {
     onSelectAddress,
     onResetAddress,
     onBlurDropdown,
+    isShowFilter,
+    onToggleIsShowFilter,
   };
 };
 

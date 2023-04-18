@@ -1,7 +1,10 @@
+/* eslint-disable react-native/no-color-literals */
+/* eslint-disable react-native/no-inline-styles */
 import {
   Pressable,
   SafeAreaView,
   ScrollView,
+  StyleSheet,
   Text,
   TextInput,
   TouchableOpacity,
@@ -16,7 +19,6 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import CommonStyles from 'theme/CommonStyles';
 import Colors from 'theme/colors';
 import SelectDropdown from 'react-native-select-dropdown';
-import { repeatNotificationType } from 'data/user/user.mockData';
 
 const Home = () => {
   const {
@@ -35,42 +37,85 @@ const Home = () => {
     onChangeDatePicker,
     onChangeTimePicker,
     onSelectRepeatType,
+    onClosePickTime,
   } = useLogicHome();
 
   return (
     <SafeAreaView style={CommonStyles.container}>
+      <Pressable
+        style={StyleSheet.absoluteFillObject}
+        onPress={onClosePickTime}
+      />
       <View style={styles.container}>
         <Text style={styles.txtTitle}>Thông tin khách hàng</Text>
 
-        <ScrollView style={styles.wrapForm}>
-          <TextInput
-            style={styles.input}
-            placeholder="Họ"
-            onChangeText={onChangeTextInfo('firstName')}
-            value={userInfo.firstName}
+        <ScrollView
+          showsVerticalScrollIndicator={false}
+          style={styles.wrapForm}>
+          <Pressable
+            style={StyleSheet.absoluteFillObject}
+            onPress={onClosePickTime}
           />
+
+          <Text style={styles.title} children="Tên:" />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { borderColor: !userInfo.name ? 'red' : 'black' },
+            ]}
             placeholder="Tên đệm & tên"
-            onChangeText={onChangeTextInfo('lastName')}
-            value={userInfo.lastName}
+            onChangeText={onChangeTextInfo('name')}
+            value={userInfo.name}
           />
+
+          <Text style={styles.title} children="Số điện thoại:" />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { borderColor: !userInfo.phoneNumber ? 'red' : 'black' },
+            ]}
             placeholder="Số điện thoại"
             onChangeText={onChangeTextInfo('phoneNumber')}
             value={userInfo.phoneNumber}
             keyboardType="numeric"
           />
 
-          <AddressMenu canResetAddress={false} />
-
+          <Text style={styles.title} children="Địa chỉ cụ thể:" />
           <TextInput
-            style={styles.input}
+            style={[
+              styles.input,
+              { borderColor: !userInfo.detailAddress ? 'red' : 'black' },
+            ]}
             placeholder="Địa chỉ cụ thể, số nhà, tên đường,..."
             onChangeText={onChangeTextInfo('detailAddress')}
             value={userInfo.detailAddress}
           />
+
+          <Text style={styles.title} children="Số buổi hoàn thành:" />
+          <TextInput
+            style={[
+              styles.input,
+              { borderColor: !userInfo.time_maintain ? 'red' : 'black' },
+            ]}
+            placeholder="Số buổi hoàn thành..."
+            onChangeText={onChangeTextInfo('time_maintain')}
+            value={userInfo.time_maintain}
+            keyboardType="numeric"
+          />
+
+          <Text style={styles.title} children="Ghi chú:" />
+          <TextInput
+            style={[
+              styles.inputArea,
+              { borderColor: !userInfo.note ? 'red' : 'black' },
+            ]}
+            placeholder="Ghi chú..."
+            onChangeText={onChangeTextInfo('note')}
+            value={userInfo.note}
+            multiline={true}
+          />
+
+          <AddressMenu canResetAddress={false} />
 
           {/* date,time picker,repeat type */}
           <View style={styles.wrapDateTime}>
@@ -87,11 +132,29 @@ const Home = () => {
             </TouchableOpacity>
 
             <SelectDropdown
-              data={repeatNotificationType}
+              data={[
+                { value: 'minute', text: 'phút' },
+                { value: 'hour', text: 'giờ' },
+                { value: 'day', text: 'ngày' },
+                { value: 'week', text: 'tuần' },
+                { value: 'month', text: 'tháng' },
+                { value: 'year', text: 'năm' },
+              ]}
               onSelect={onSelectRepeatType}
               buttonStyle={styles.btnDatePicker}
               defaultButtonText="Lịch nhắc"
               buttonTextStyle={styles.txtTypeRepeat}
+              defaultValue="month"
+              buttonTextAfterSelection={selectedItem => {
+                // text represented after item is selected
+                // if data array is an array of objects then return selectedItem.property to render after item is selected
+                return selectedItem.text;
+              }}
+              rowTextForSelection={item => {
+                // text represented for each item in dropdown
+                // if data array is an array of objects then return item.property to represent item in dropdown
+                return item.text;
+              }}
             />
           </View>
 
