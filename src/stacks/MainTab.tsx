@@ -5,6 +5,7 @@ import Home from 'screens/Home/Home';
 import ListUser from 'screens/ListUser/ListUser';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from 'theme/colors';
+import ListNotiUserToday from 'screens/ListNotiUserToday/ListNotiUserToday';
 
 const Tab = createBottomTabNavigator();
 
@@ -36,9 +37,33 @@ function renderListUserIcon(_props: {
   );
 }
 
+function renderListNotiListIcon(_props: {
+  focused: boolean;
+  color: string;
+  size: number;
+}) {
+  return (
+    <FontAwesome
+      name="star"
+      size={30}
+      color={_props.focused ? Colors.blue : Colors.black}
+    />
+  );
+}
+
 const MainTab = () => {
   return (
-    <Tab.Navigator screenOptions={{ headerShown: false }}>
+    <Tab.Navigator
+      initialRouteName={ROUTES.LIST_USER}
+      screenOptions={{ headerShown: false }}>
+      <Tab.Screen
+        name={ROUTES.LIST_USER}
+        component={ListUser}
+        options={{
+          tabBarIcon: renderListUserIcon,
+          tabBarShowLabel: false,
+        }}
+      />
       <Tab.Screen
         name={ROUTES.HOME}
         component={Home}
@@ -47,11 +72,12 @@ const MainTab = () => {
           tabBarShowLabel: false,
         }}
       />
+
       <Tab.Screen
-        name={ROUTES.LIST_USER}
-        component={ListUser}
+        name={ROUTES.NOTI_DATE}
+        component={ListNotiUserToday}
         options={{
-          tabBarIcon: renderListUserIcon,
+          tabBarIcon: renderListNotiListIcon,
           tabBarShowLabel: false,
         }}
       />

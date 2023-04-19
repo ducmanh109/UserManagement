@@ -1,19 +1,20 @@
 import { action, flow, makeObservable, observable } from 'mobx';
-import firestore from '@react-native-firebase/firestore';
-import { AxiosResponse } from 'axios';
 import { showMessage } from 'react-native-flash-message';
-import addressMenuStore from 'data/addressMenu/AddressMenuStore';
-import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import database from '@react-native-firebase/database';
 import PushNotification from 'react-native-push-notification';
+import { Alert } from 'react-native';
+import notificationService from 'services/NotificaionService';
 
 class ListUserStore {
-  collectionUser = firestore().collection('Users');
+  refUser = database().ref('Users');
   listUser: any[];
 
   constructor() {
     this.listUser = [];
     makeObservable(this, {
       listUser: observable,
+
+      setListUser: action,
       onCreateUser: flow,
       onGetListUser: flow,
       onDeleteUser: flow,
@@ -21,45 +22,33 @@ class ListUserStore {
     });
   }
 
+  setListUser(newList: any) {
+    this.listUser = newList;
+  }
+
   async onGetListUser() {
     try {
-      // const { ward, province, district } = addressMenuStore.selectedAddress;
+      const snapshot = await this.refUser.once('value');
 
-      // let response: any;
-      const newList: any = [];
-
-      // if (!ward) {
-      const response = await this.collectionUser.get();
-      // }
-
-      // if (province.length > 0) {
-      //   response = await this.collectionUser
-      //     .where('province', '==', province)
-      //     .get();
-      // }
-
-      // if (district) {
-      //   response = await this.collectionUser
-      //     .where('province', '==', province)
-      //     .where('district', '==', district)
-      //     .get();
-      // }
-
-      // if (ward) {
-      //   response = await this.collectionUser
-      //     .where('province', '==', province)
-      //     .where('district', '==', district)
-      //     .where('ward', '==', ward)
-      //     .get();
-      // }
-
-      response.forEach((user: any) => {
-        console.log('useruser', user.id);
-        newList.push({ ...user.data(), id: user.id });
-      });
-      console.log('newList', newList);
+      const userList = snapshot.val();
+      const newList = userList
+        ? Object.entries(userList).map(([id, value]) => ({ id, ...value }))
+        : [];
 
       this.listUser = newList;
+
+      setTimeout(() => {
+        PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
+          console.log(
+            '<<<<<<<<<<<,,>>>>>>>>>>>',
+            listScheduledNoti.length,
+            listScheduledNoti.map(item => ({
+              ...item,
+              date: new Date(item.date).toLocaleString(),
+            })),
+          );
+        });
+      }, 5000);
 
       return newList;
     } catch (error) {
@@ -69,7 +58,7 @@ class ListUserStore {
 
   *onCreateUser(data: any) {
     try {
-      this.collectionUser.add(data).then(() => {
+      this.refUser.push(data).then(() => {
         showMessage({
           message: 'Tạo thông tin khách hàng thành công',
           type: 'success',
@@ -85,24 +74,35 @@ class ListUserStore {
     }
   }
 
-  *onDeleteUser(id: any) {
+  *onDeleteUser(id: any, onDeleteSuccess: any) {
     try {
-      this.collectionUser
-        .doc(id)
-        .delete()
+      this.refUser
+        .child(id)
+        .remove()
         .then(() => {
-          this.onGetListUser();
+          Alert.alert('Xoá thành công');
+          onDeleteSuccess && onDeleteSuccess();
+        })
+        .catch(error => {
+          console.log('error', error);
         });
     } catch (error) {
-      console.log('Add New User Fail With Error', error);
+      console.log('onDeleteUser Fail With Error', error);
     }
   }
 
-  *onUpdateUser(id: any, data: any) {
+  *onUpdateUser(id: any, data: any, onUpdateSuccess?: any) {
     try {
-      this.collectionUser.doc(id).update({
-        scheduledTime: data,
-      });
+      this.refUser
+        .child(id)
+        .update(data)
+        .then(() => {
+          // notificationService.editScheduledNotifications({
+          //   userDetail: data,
+          // });
+          Alert.alert('Sửa thành công');
+        });
+      onUpdateSuccess && onUpdateSuccess(data);
     } catch (error) {
       console.log('Add New User Fail With Error', error);
     }

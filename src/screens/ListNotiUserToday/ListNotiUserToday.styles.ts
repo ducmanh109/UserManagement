@@ -24,7 +24,8 @@ const styles = StyleSheet.create({
     width: `${100 / 3}%`,
   },
   list: {
-    paddingHorizontal: 10,
+    paddingBottom: CommonHeights.res20,
+    padding: 10,
   },
   wrapItem: {
     flex: 1,

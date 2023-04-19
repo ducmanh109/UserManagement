@@ -3,9 +3,9 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>873463133708-6nngb3p60khrke9a6fp62ad0g9tam8h2.apps.googleusercontent.com</string>
+	<string>873463133708-vpi6s0ihieebg6msvtjt9m6b0lg9ku02.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.873463133708-6nngb3p60khrke9a6fp62ad0g9tam8h2</string>
+	<string>com.googleusercontent.apps.873463133708-vpi6s0ihieebg6msvtjt9m6b0lg9ku02</string>
 	<key>API_KEY</key>
 	<string>AIzaSyABs-48ap0QvAHuTJ-ZTHHvjKi64A-Vq2w</string>
 	<key>GCM_SENDER_ID</key>
@@ -13,7 +13,7 @@
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
-	<string>org.reactjs.native.example.NewArchitecture</string>
+	<string>com.user.management1996.ios</string>
 	<key>PROJECT_ID</key>
 	<string>usermanagament</string>
 	<key>STORAGE_BUCKET</key>
@@ -29,6 +29,8 @@
 	<key>IS_SIGNIN_ENABLED</key>
 	<true></true>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:873463133708:ios:fe5a0bc8f05fc0141f6029</string>
+	<string>1:873463133708:ios:01e3fe4485278a7b1f6029</string>
+	<key>DATABASE_URL</key>
+	<string>https://usermanagament-default-rtdb.asia-southeast1.firebasedatabase.app</string>
 </dict>
 </plist>

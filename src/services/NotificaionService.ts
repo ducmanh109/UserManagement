@@ -25,107 +25,87 @@ class NotificationService {
     this.repeatType = repeatType;
   }
 
-  scheduleNotifications({
-    title,
-    message,
-  }: {
-    title: string;
-    message: string;
-  }) {
-    const remindTime =
-      userStore?.timeToRemind && userStore?.timeToRemind?.getTime();
-    console.log('remindTime', remindTime, userStore?.timeToRemind?.getTime());
-    if (Platform.OS === 'android') {
-      PushNotification.localNotificationSchedule({
-        channelId: 'reminders',
-        title,
-        message,
-        date: new Date(remindTime as number),
-        allowWhileIdle: true,
-        priority: 'max',
-        importance: 'max',
-        playSound: true,
-        repeatType: this.repeatType as any,
+  editScheduledNotifications({ userDetail }: { userDetail: USER_INFO_TYPE }) {
+    console.log('editScheduledNotifications ->>>>> userDetail ', userDetail);
+    PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
+      const userScheduled = listScheduledNoti?.filter(notification => {
+        return notification?.data?.userId === userDetail.id;
       });
-    }
+      console.log(
+        'editScheduledNotifications ->>>>> userScheduled',
+        userScheduled,
+      );
+      if (userScheduled?.length) {
+        console.log(
+          'editScheduledNotifications ->>>>> removePendingNotificationRequests ->>>>> listScheduledNoti',
+          userScheduled,
+        );
 
-    const repeatsComponent: { [key: string]: boolean } = {};
+        PushNotificationIOS.removePendingNotificationRequests([
+          userScheduled[0].id,
+        ]);
+      }
 
-    if (this.repeatType !== 'time' && typeof this.repeatType === 'string') {
-      repeatsComponent[
-        this.repeatType === 'week' ? 'dayOfWeek' : this.repeatType
-      ] = true;
-    }
-
-    PushNotificationIOS.addNotificationRequest({
-      id: 'reminders',
-      title,
-      subtitle: message,
-      fireDate: new Date(remindTime as number),
-      repeats: true,
-      repeatsComponent,
+      this.scheduleNotifications({ userDetail });
     });
   }
 
-  addScheduleNotifications({
-    userDetail,
-  }: // title,
-  // message,
-  // timeToRemind,
-  // repeatType,
-  // id,
-  {
-    userDetail: USER_INFO_TYPE;
-    // title: string;
-    // message: string;
-    // timeToRemind: any;
-    // repeatType: any;
-    // id: any;
-  }) {
-    const userId = userDetail.id;
+  scheduleNotifications({ userDetail }: { userDetail: USER_INFO_TYPE }) {
+    const remindTime = userDetail?.timeToRemind
+      ? new Date(userDetail?.timeToRemind as any)
+      : null;
+
+    if (!remindTime || !userDetail?.repeatType) {
+      return;
+    }
+    console.log('scheduleNotifications ->>>>> userDetail', userDetail);
+    PushNotificationIOS.scheduleLocalNotification({
+      alertTitle: `${userDetail.name}` + ',' + new Date().toDateString(),
+      alertBody: `${userDetail.phoneNumber}, ${userDetail?.ward}, ${userDetail?.district}, ${userDetail?.province} \n ${userDetail.detailAddress}`,
+      fireDate: new Date(remindTime).toISOString(), // Thời gian thông báo sẽ xuất hiện, ở đây là 30 giây sau khi gọi hàm.
+      repeatInterval: userDetail?.repeatType as any, // Lặp lại thông báo hàng ngày.
+      userInfo: {
+        userId: userDetail.id,
+        ...userDetail,
+        timeToRemind: '',
+        date: '',
+        scheduledTime: '',
+      }, // Thông tin bổ sung nếu có.
+    });
+  }
+
+  syncScheduleNotifications({ userDetail }: { userDetail: USER_INFO_TYPE }) {
+    console.log(
+      'syncScheduleNotificationssyncScheduleNotificationssyncScheduleNotifications',
+    );
+    const remindTime = userDetail?.timeToRemind
+      ? new Date(userDetail?.timeToRemind as any)
+      : null;
 
     PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
       const userScheduled = listScheduledNoti?.filter(value => {
-        return value?.data?.userId === userId;
+        return value?.data?.userId === userDetail.id;
       });
-
-      if (userScheduled?.length) {
-        if (!userDetail?.scheduledTime) {
-          listUserStore.onUpdateUser(userDetail.id, userScheduled[0]);
-        }
-        return;
+      console.log(
+        'userDetail,listScheduledNoti',
+        userDetail,
+        listScheduledNoti,
+        userScheduled,
+      );
+      if (userScheduled?.length || !remindTime || !userDetail?.repeatType) {
+        // if (!remindTime || !userDetail?.repeatType) {
+        console.log(
+          'syncScheduleNotifications ->>>>> !remindTime || !userDetail?.repeatType ->>>> removePendingNotificationRequests',
+          userScheduled.map(item => item.id),
+        );
+        PushNotificationIOS.removePendingNotificationRequests(
+          userScheduled.map(item => item.id),
+        );
+        // }
+        // return;
       }
 
-      const remindTime = userDetail?.timeToRemind.toMillis();
-
-      const repeatsComponent: { [key: string]: boolean } = {};
-
-      if (!userDetail?.repeatType) return;
-
-      if (
-        userDetail?.repeatType !== 'time' &&
-        typeof userDetail?.repeatType === 'string'
-      ) {
-        repeatsComponent[
-          userDetail?.repeatType === 'week'
-            ? 'dayOfWeek'
-            : userDetail?.repeatType
-        ] = true;
-      }
-
-      PushNotificationIOS.scheduleLocalNotification({
-        alertTitle: `${userDetail.name}` + ',' + new Date().toDateString(),
-        alertBody: `${userDetail.phoneNumber}, ${userDetail?.ward}, ${userDetail?.district}, ${userDetail?.province} \n ${userDetail.detailAddress}`,
-        fireDate: new Date(remindTime).toISOString(), // Thời gian thông báo sẽ xuất hiện, ở đây là 30 giây sau khi gọi hàm.
-        repeatInterval: userDetail?.repeatType as any, // Lặp lại thông báo hàng ngày.
-        userInfo: {
-          userId,
-          ...userDetail,
-          timeToRemind: '',
-          date: '',
-          scheduledTime: '',
-        }, // Thông tin bổ sung nếu có.
-      });
+      this.scheduleNotifications({ userDetail });
     });
   }
 }

@@ -56,6 +56,7 @@ class UserStore {
   }
 
   *onCreateUser(data: any) {
+    console.log('datadatadatadata', data);
     try {
       listUserStore.onCreateUser(data);
     } catch (error) {

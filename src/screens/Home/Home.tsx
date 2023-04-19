@@ -19,15 +19,30 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 import CommonStyles from 'theme/CommonStyles';
 import Colors from 'theme/colors';
 import SelectDropdown from 'react-native-select-dropdown';
+import { USER_INFO_TYPE } from 'api/user/user.type';
 
-const Home = () => {
+const valuePicker = [
+  { value: 'minute', text: 'phút' },
+  { value: 'hour', text: 'giờ' },
+  { value: 'day', text: 'ngày' },
+  { value: 'week', text: 'tuần' },
+  { value: 'month', text: 'tháng' },
+  { value: 'year', text: 'năm' },
+];
+
+const Home = ({
+  userInfoParams,
+  onUpdateSuccess,
+}: {
+  userInfoParams?: USER_INFO_TYPE;
+  onUpdateSuccess: any;
+}) => {
   const {
     userInfo,
     disableSubmitBtn,
     showDatePicker,
     showTimePicker,
     selectedDate,
-    defaultTimePicker,
     formatSelectedDate,
     formatSelectedTime,
     onChangeTextInfo,
@@ -35,28 +50,20 @@ const Home = () => {
     onShowDatePicker,
     onShowTimePicker,
     onChangeDatePicker,
-    onChangeTimePicker,
     onSelectRepeatType,
     onClosePickTime,
-  } = useLogicHome();
+  } = useLogicHome(userInfoParams, onUpdateSuccess);
 
   return (
     <SafeAreaView style={CommonStyles.container}>
-      <Pressable
-        style={StyleSheet.absoluteFillObject}
-        onPress={onClosePickTime}
-      />
       <View style={styles.container}>
-        <Text style={styles.txtTitle}>Thông tin khách hàng</Text>
+        {!userInfoParams && (
+          <Text style={styles.txtTitle}>Thông tin khách hàng</Text>
+        )}
 
         <ScrollView
           showsVerticalScrollIndicator={false}
           style={styles.wrapForm}>
-          <Pressable
-            style={StyleSheet.absoluteFillObject}
-            onPress={onClosePickTime}
-          />
-
           <Text style={styles.title} children="Tên:" />
           <TextInput
             style={[
@@ -120,31 +127,36 @@ const Home = () => {
           {/* date,time picker,repeat type */}
           <View style={styles.wrapDateTime}>
             <TouchableOpacity
-              style={styles.btnDatePicker}
+              style={[
+                styles.btnDatePicker,
+                { backgroundColor: showDatePicker ? 'lightgreen' : 'white' },
+              ]}
               onPress={onShowDatePicker}>
               <Text>{formatSelectedDate}</Text>
             </TouchableOpacity>
 
             <TouchableOpacity
-              style={styles.btnDatePicker}
+              style={[
+                styles.btnDatePicker,
+                { backgroundColor: showTimePicker ? 'lightgreen' : 'white' },
+              ]}
               onPress={onShowTimePicker}>
               <Text>{formatSelectedTime}</Text>
             </TouchableOpacity>
 
             <SelectDropdown
-              data={[
-                { value: 'minute', text: 'phút' },
-                { value: 'hour', text: 'giờ' },
-                { value: 'day', text: 'ngày' },
-                { value: 'week', text: 'tuần' },
-                { value: 'month', text: 'tháng' },
-                { value: 'year', text: 'năm' },
-              ]}
+              data={valuePicker}
               onSelect={onSelectRepeatType}
               buttonStyle={styles.btnDatePicker}
               defaultButtonText="Lịch nhắc"
               buttonTextStyle={styles.txtTypeRepeat}
-              defaultValue="month"
+              defaultValue={
+                userInfoParams?.repeatType
+                  ? valuePicker.find(
+                      item => item.value === userInfoParams?.repeatType,
+                    )
+                  : { value: 'month', text: 'tháng' }
+              }
               buttonTextAfterSelection={selectedItem => {
                 // text represented after item is selected
                 // if data array is an array of objects then return selectedItem.property to render after item is selected
@@ -163,16 +175,18 @@ const Home = () => {
               value={selectedDate}
               mode="date"
               onChange={onChangeDatePicker}
-              display="spinner"
+              display="inline"
+              locale="vi"
             />
           )}
 
           {showTimePicker && (
             <RNDateTimePicker
-              value={defaultTimePicker}
+              value={selectedDate}
               mode="time"
-              onChange={onChangeTimePicker}
+              onChange={onChangeDatePicker}
               display="spinner"
+              locale="vi"
             />
           )}
 
@@ -190,7 +204,7 @@ const Home = () => {
                 ...styles.txtSubmit,
                 color: disableSubmitBtn ? Colors.black : Colors.white,
               }}>
-              Tạo
+              {userInfoParams ? 'Sửa' : 'Tạo'}
             </Text>
           </Pressable>
         </ScrollView>

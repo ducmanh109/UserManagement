@@ -1,4 +1,4 @@
-import { Pressable, Text, View } from 'react-native';
+import { Pressable, Text, TouchableOpacity, View } from 'react-native';
 import React, { useCallback } from 'react';
 import SelectDropdown from 'react-native-select-dropdown';
 import { observer } from 'mobx-react';
@@ -124,25 +124,32 @@ const AddressMenu: React.FC<PropsType> = ({ canResetAddress }) => {
           />
         </>
       ) : (
-        <>
-          <Text>{`${addressMenuStore.selectedAddress.ward}, ${addressMenuStore.selectedAddress.district}, ${addressMenuStore.selectedAddress.province}`}</Text>
-          <Pressable style={styles.btnReset} onPress={onToggleIsShowFilter}>
-            <Text>Mở</Text>
-          </Pressable>
-        </>
+        <TouchableOpacity onPress={onToggleIsShowFilter}>
+          <>
+            {!addressMenuStore?.selectedAddress?.province ? (
+              <Text>Chưa chọn địa chỉ</Text>
+            ) : (
+              <Text>{`${addressMenuStore.selectedAddress.ward}, ${addressMenuStore.selectedAddress.district}, ${addressMenuStore.selectedAddress.province}`}</Text>
+            )}
+          </>
+        </TouchableOpacity>
       )}
       {/* </ScrollView> */}
       <View style={{ flexDirection: 'row' }}>
-        {canResetAddress && (
-          <Pressable style={styles.btnReset} onPress={() => onResetAddress()}>
-            <Text style={styles.txtReset}>Đặt lại</Text>
-          </Pressable>
-        )}
-
         {isShowFilter && (
-          <Pressable style={styles.btnReset} onPress={onToggleIsShowFilter}>
-            <Text>Đóng</Text>
-          </Pressable>
+          <>
+            {canResetAddress && (
+              <Pressable
+                style={styles.btnReset}
+                onPress={onResetAddress as any}>
+                <Text style={styles.txtReset}>Đặt lại</Text>
+              </Pressable>
+            )}
+
+            <Pressable style={styles.btnReset} onPress={onToggleIsShowFilter}>
+              <Text>Đóng</Text>
+            </Pressable>
+          </>
         )}
       </View>
     </View>

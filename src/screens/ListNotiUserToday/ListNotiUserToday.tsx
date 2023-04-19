@@ -1,14 +1,21 @@
 /* eslint-disable react-native/no-inline-styles */
 /* eslint-disable react-native/no-color-literals */
-import { View, Text, FlatList, RefreshControl, Pressable } from 'react-native';
-import React, { memo, useCallback, useEffect, useMemo } from 'react';
-import useLogicListUser from './ListUser.logic';
-import styles from './ListUser.styles';
-import AddressMenu from 'components/AddressMenu/AddressMenu';
+import { View, Text, FlatList, Pressable } from 'react-native';
+import React, { memo, useCallback } from 'react';
+import useLogicListUser from './ListNotiUserTodaylogic';
+import styles from './ListNotiUserToday.styles';
 import { observer } from 'mobx-react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { USER_INFO_TYPE } from 'api/user/user.type';
-import notificationService from 'services/NotificaionService';
+
+const timeLocale = {
+  minute: 'phút',
+  hour: 'giờ',
+  day: 'ngày',
+  week: 'tuần',
+  month: 'tháng',
+  year: 'năm',
+};
 
 const RenderRowInfo = ({ field, value }: { field: string; value: string }) => {
   return (
@@ -34,10 +41,6 @@ const ItemUser = memo(
     item: USER_INFO_TYPE;
     navigateToUserDetail: any;
   }) => {
-    useEffect(() => {
-      notificationService.syncScheduleNotifications({ userDetail: item });
-    }, [item]);
-
     return (
       <Pressable onPress={() => navigateToUserDetail(item)}>
         <View
@@ -91,45 +94,38 @@ const ItemUser = memo(
   },
 );
 
-const ListUser = () => {
-  const { users, isLoading, getListUser, navigateToUserDetail } =
-    useLogicListUser();
+const ListNotiUserToday = () => {
+  const { users, navigateToUserDetail, onDeleteUser } = useLogicListUser();
 
   const renderItem = useCallback(
     ({ item }: { item: USER_INFO_TYPE }) => {
       return (
-        <ItemUser item={item} navigateToUserDetail={navigateToUserDetail} />
+        <ItemUser
+          item={item}
+          navigateToUserDetail={navigateToUserDetail}
+          onDeleteUser={onDeleteUser}
+        />
       );
     },
-    [navigateToUserDetail],
+    [navigateToUserDetail, onDeleteUser],
   );
-
-  const refreshControl = useMemo(() => {
-    return <RefreshControl refreshing={isLoading} onRefresh={getListUser} />;
-  }, [getListUser, isLoading]);
 
   const ListEmptyComponent = useCallback(() => {
     return <Text style={styles.txtNoData}>Không có dữ liệu</Text>;
   }, []);
 
   return (
-    <View style={styles.container}>
-      <SafeAreaView edges={['top']} />
-      <View style={{ padding: 16 }}>
-        <AddressMenu canResetAddress={true} />
-      </View>
-
+    <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
         <FlatList
           data={users}
           renderItem={renderItem}
-          refreshControl={refreshControl}
           style={styles.list}
           ListEmptyComponent={ListEmptyComponent}
         />
       </View>
-    </View>
+    </SafeAreaView>
   );
 };
 
-export default observer(ListUser);
+export default observer(ListNotiUserToday);

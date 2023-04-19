@@ -22,6 +22,7 @@ const styles = StyleSheet.create({
     fontSize: CommonFonts.res14,
   },
   btnReset: {
+    margin: 10,
     backgroundColor: Colors.azureRadiance,
     alignItems: 'center',
     justifyContent: 'center',

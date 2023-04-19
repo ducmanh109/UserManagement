@@ -14,7 +14,7 @@ const RowInfo: React.FC<PropsType> = ({ leftInfo, rightInfo }) => {
     <View style={styles.container}>
       <Text style={styles.leftInfo}>{leftInfo}: </Text>
 
-      <Text>{rightInfo}</Text>
+      <Text style={{ maxWidth: '70%' }}>{rightInfo}</Text>
     </View>
   );
 };

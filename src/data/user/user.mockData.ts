@@ -31,4 +31,16 @@ export const userRowInfo = [
     leftInfo: 'Địa chỉ cụ thể',
     rightKey: 'detailAddress',
   },
+  {
+    leftInfo: 'Ngày bắt đầu nhắc',
+    rightKey: 'timeToRemind',
+  },
+  {
+    leftInfo: 'Nhắc theo',
+    rightKey: 'repeatType',
+  },
+  {
+    leftInfo: 'Ghi chú',
+    rightKey: 'note',
+  },
 ];
