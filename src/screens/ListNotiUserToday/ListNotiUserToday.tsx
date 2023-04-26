@@ -8,15 +8,6 @@ import { observer } from 'mobx-react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { USER_INFO_TYPE } from 'api/user/user.type';
 
-const timeLocale = {
-  minute: 'phút',
-  hour: 'giờ',
-  day: 'ngày',
-  week: 'tuần',
-  month: 'tháng',
-  year: 'năm',
-};
-
 const RenderRowInfo = ({ field, value }: { field: string; value: string }) => {
   return (
     <View style={{ flexDirection: 'row', marginBottom: 4 }}>
@@ -95,19 +86,15 @@ const ItemUser = memo(
 );
 
 const ListNotiUserToday = () => {
-  const { users, navigateToUserDetail, onDeleteUser } = useLogicListUser();
+  const { users, navigateToUserDetail } = useLogicListUser();
 
   const renderItem = useCallback(
     ({ item }: { item: USER_INFO_TYPE }) => {
       return (
-        <ItemUser
-          item={item}
-          navigateToUserDetail={navigateToUserDetail}
-          onDeleteUser={onDeleteUser}
-        />
+        <ItemUser item={item} navigateToUserDetail={navigateToUserDetail} />
       );
     },
-    [navigateToUserDetail, onDeleteUser],
+    [navigateToUserDetail],
   );
 
   const ListEmptyComponent = useCallback(() => {

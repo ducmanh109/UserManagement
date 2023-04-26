@@ -24,10 +24,6 @@ const useLogicListUser = () => {
 
   const listUser = fiterUser(listUserStore.listUser);
 
-  const onDeleteUser = useCallback((id: string) => {
-    listUserStore.onDeleteUser(id);
-  }, []);
-
   const navigateToUserDetail = useCallback(
     (item: USER_INFO_TYPE) => {
       navigation.navigate(ROUTES.USER_DETAIL as never, { item } as never);
@@ -38,7 +34,6 @@ const useLogicListUser = () => {
   return {
     users: listUser,
     navigateToUserDetail,
-    onDeleteUser,
   };
 };
 
