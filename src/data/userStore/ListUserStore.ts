@@ -4,6 +4,8 @@ import database from '@react-native-firebase/database';
 import PushNotification from 'react-native-push-notification';
 import { Alert } from 'react-native';
 import notificationService from 'services/NotificaionService';
+import PushNotificationIOS from '@react-native-community/push-notification-ios';
+import { USER_INFO_TYPE } from 'api/user/user.type';
 
 class ListUserStore {
   refUser = database().ref('Users');
@@ -24,6 +26,23 @@ class ListUserStore {
 
   setListUser(newList: any) {
     this.listUser = newList;
+    PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
+      PushNotificationIOS.removePendingNotificationRequests(
+        listScheduledNoti.map(scheduledLocal => scheduledLocal.id),
+      );
+    });
+
+    if (newList?.length) {
+      newList.map((item: any) => {
+        notificationService.syncScheduleNotifications({ userDetail: item });
+      });
+    }
+
+    setTimeout(() => {
+      PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
+        console.log('listScheduledNoti', listScheduledNoti);
+      });
+    }, 5000);
   }
 
   async onGetListUser() {
@@ -35,20 +54,7 @@ class ListUserStore {
         ? Object.entries(userList).map(([id, value]) => ({ id, ...value }))
         : [];
 
-      this.listUser = newList;
-
-      setTimeout(() => {
-        PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
-          console.log(
-            '<<<<<<<<<<<,,>>>>>>>>>>>',
-            listScheduledNoti.length,
-            listScheduledNoti.map(item => ({
-              ...item,
-              date: new Date(item.date).toLocaleString(),
-            })),
-          );
-        });
-      }, 5000);
+      this.setListUser(newList);
 
       return newList;
     } catch (error) {
@@ -92,19 +98,17 @@ class ListUserStore {
   }
 
   *onUpdateUser(id: any, data: any, onUpdateSuccess?: any) {
+    console.log('datadata', data);
     try {
       this.refUser
         .child(id)
         .update(data)
         .then(() => {
-          // notificationService.editScheduledNotifications({
-          //   userDetail: data,
-          // });
           Alert.alert('Sửa thành công');
         });
       onUpdateSuccess && onUpdateSuccess(data);
     } catch (error) {
-      console.log('Add New User Fail With Error', error);
+      console.log('onUpdateUser Fail With Error', error);
     }
   }
 }

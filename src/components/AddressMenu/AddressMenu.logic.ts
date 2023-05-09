@@ -113,7 +113,11 @@ const useLogicAddressMenu = () => {
             ...addressMenuStore.selectedAddress,
             province: selectedItem,
           });
-
+          console.log(
+            'userStore.addressData.provinces, selectedItem',
+            userStore.addressData.provinces,
+            selectedItem,
+          );
           getAddressCode(userStore.addressData.provinces, selectedItem);
 
           scrollViewRef?.current?.scrollTo({

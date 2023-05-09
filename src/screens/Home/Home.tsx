@@ -4,10 +4,8 @@ import {
   Pressable,
   SafeAreaView,
   ScrollView,
-  StyleSheet,
   Text,
   TextInput,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import React from 'react';
@@ -15,20 +13,12 @@ import { observer } from 'mobx-react';
 import styles from './Home.styles';
 import useLogicHome from './Home.logic';
 import AddressMenu from 'components/AddressMenu/AddressMenu';
-import RNDateTimePicker from '@react-native-community/datetimepicker';
 import CommonStyles from 'theme/CommonStyles';
 import Colors from 'theme/colors';
-import SelectDropdown from 'react-native-select-dropdown';
 import { USER_INFO_TYPE } from 'api/user/user.type';
-
-const valuePicker = [
-  { value: 'minute', text: 'phút' },
-  { value: 'hour', text: 'giờ' },
-  { value: 'day', text: 'ngày' },
-  { value: 'week', text: 'tuần' },
-  { value: 'month', text: 'tháng' },
-  { value: 'year', text: 'năm' },
-];
+import TimeMaintain from './TimeMaintain';
+import SelectDateMaintain from './SelectDateMaintain';
+import CollectMoney from './CollectMoney';
 
 const Home = ({
   userInfoParams,
@@ -40,20 +30,16 @@ const Home = ({
   const {
     userInfo,
     disableSubmitBtn,
-    showDatePicker,
-    showTimePicker,
     selectedDate,
-    formatSelectedDate,
-    formatSelectedTime,
     onChangeTextInfo,
     onSubmit,
-    onShowDatePicker,
-    onShowTimePicker,
-    onChangeDatePicker,
     onSelectRepeatType,
-    onClosePickTime,
+    onSelectRepeatTypeMoney,
+    selectedDateMoney,
+    onChangeDatePicker,
+    onChangeDatePickerMoney,
   } = useLogicHome(userInfoParams, onUpdateSuccess);
-
+  console.log('userInfoParams', userInfoParams);
   return (
     <SafeAreaView style={CommonStyles.container}>
       <View style={styles.container}>
@@ -99,15 +85,10 @@ const Home = ({
           />
 
           <Text style={styles.title} children="Số buổi hoàn thành:" />
-          <TextInput
-            style={[
-              styles.input,
-              { borderColor: !userInfo.time_maintain ? 'red' : 'black' },
-            ]}
-            placeholder="Số buổi hoàn thành..."
-            onChangeText={onChangeTextInfo('time_maintain')}
-            value={userInfo.time_maintain}
-            keyboardType="numeric"
+          <TimeMaintain
+            setTimeMaintain={onChangeTextInfo('time_maintain')}
+            timeMaintain={userInfo.time_maintain}
+            isEdit={true}
           />
 
           <Text style={styles.title} children="Ghi chú:" />
@@ -122,73 +103,38 @@ const Home = ({
             multiline={true}
           />
 
-          <AddressMenu canResetAddress={false} />
-
-          {/* date,time picker,repeat type */}
-          <View style={styles.wrapDateTime}>
-            <TouchableOpacity
-              style={[
-                styles.btnDatePicker,
-                { backgroundColor: showDatePicker ? 'lightgreen' : 'white' },
-              ]}
-              onPress={onShowDatePicker}>
-              <Text>{formatSelectedDate}</Text>
-            </TouchableOpacity>
-
-            <TouchableOpacity
-              style={[
-                styles.btnDatePicker,
-                { backgroundColor: showTimePicker ? 'lightgreen' : 'white' },
-              ]}
-              onPress={onShowTimePicker}>
-              <Text>{formatSelectedTime}</Text>
-            </TouchableOpacity>
-
-            <SelectDropdown
-              data={valuePicker}
-              onSelect={onSelectRepeatType}
-              buttonStyle={styles.btnDatePicker}
-              defaultButtonText="Lịch nhắc"
-              buttonTextStyle={styles.txtTypeRepeat}
-              defaultValue={
-                userInfoParams?.repeatType
-                  ? valuePicker.find(
-                      item => item.value === userInfoParams?.repeatType,
-                    )
-                  : { value: 'month', text: 'tháng' }
-              }
-              buttonTextAfterSelection={selectedItem => {
-                // text represented after item is selected
-                // if data array is an array of objects then return selectedItem.property to render after item is selected
-                return selectedItem.text;
-              }}
-              rowTextForSelection={item => {
-                // text represented for each item in dropdown
-                // if data array is an array of objects then return item.property to represent item in dropdown
-                return item.text;
-              }}
+          <View style={{ paddingVertical: 8 }}>
+            <AddressMenu
+              province={userInfoParams?.province}
+              district={userInfoParams?.district}
+              ward={userInfoParams?.ward}
+              canResetAddress={false}
             />
           </View>
 
-          {showDatePicker && (
-            <RNDateTimePicker
-              value={selectedDate}
-              mode="date"
-              onChange={onChangeDatePicker}
-              display="inline"
-              locale="vi"
-            />
-          )}
+          <CollectMoney
+            onChangeCollectMoney={onChangeTextInfo('collectMoneyType')}
+            collectMoney={userInfo.collectMoneyType}
+            isEdit={true}
+          />
 
-          {showTimePicker && (
-            <RNDateTimePicker
-              value={selectedDate}
-              mode="time"
-              onChange={onChangeDatePicker}
-              display="spinner"
-              locale="vi"
-            />
-          )}
+          <SelectDateMaintain
+            onSelectRepeatType={onSelectRepeatType}
+            repeatType={userInfo.repeatType}
+            selectedDate={selectedDate}
+            initialRepeatType={userInfoParams?.repeatType}
+            type="maintain"
+            onChangeDatePicker={onChangeDatePicker}
+          />
+
+          <SelectDateMaintain
+            onSelectRepeatType={onSelectRepeatTypeMoney}
+            repeatType={userInfo.repeatTypeMoney}
+            selectedDate={selectedDateMoney}
+            initialRepeatType={userInfoParams?.repeatTypeMoney}
+            type="money"
+            onChangeDatePicker={onChangeDatePickerMoney}
+          />
 
           <Pressable
             disabled={disableSubmitBtn}

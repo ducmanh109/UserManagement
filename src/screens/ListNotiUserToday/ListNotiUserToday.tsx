@@ -7,6 +7,8 @@ import styles from './ListNotiUserToday.styles';
 import { observer } from 'mobx-react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { USER_INFO_TYPE } from 'api/user/user.type';
+import RNDateTimePicker from '@react-native-community/datetimepicker';
+import { format } from 'date-fns';
 
 const RenderRowInfo = ({ field, value }: { field: string; value: string }) => {
   return (
@@ -58,13 +60,6 @@ const ItemUser = memo(
             {`${item?.province} - ${item?.district} - ${item?.ward}`}
           </Text>
 
-          {/* <RenderRowInfo
-          field="Quận/Huyện/Thành Phố"
-          value={`${item?.district}`}
-        />
-
-        <RenderRowInfo field="Phường Xã" value={`${item?.ward}`} /> */}
-
           <RenderRowInfo
             field="Địa chỉ chi tiết"
             value={`${item?.detailAddress}`}
@@ -74,11 +69,6 @@ const ItemUser = memo(
             field="Thời gian bắt đầu nhắc"
             value={`${new Date(item?.timeToRemind).toLocaleString()}`}
           />
-
-          {/* <RenderRowInfo
-            field="Lịch nhắc"
-            value={`${timeLocale[item?.repeatType]}`}
-          /> */}
         </View>
       </Pressable>
     );
@@ -86,7 +76,14 @@ const ItemUser = memo(
 );
 
 const ListNotiUserToday = () => {
-  const { users, navigateToUserDetail } = useLogicListUser();
+  const {
+    users,
+    navigateToUserDetail,
+    dateSelected,
+    showDatePicker,
+    setShowDatePicker,
+    onSelectDate,
+  } = useLogicListUser();
 
   const renderItem = useCallback(
     ({ item }: { item: USER_INFO_TYPE }) => {
@@ -104,6 +101,27 @@ const ListNotiUserToday = () => {
   return (
     <SafeAreaView style={styles.container}>
       <View style={{ flex: 1 }}>
+        <View style={{ paddingHorizontal: 16 }}>
+          <Text>{`Tổng số khách hàng cần bảo trì hôm nay: ${users.length}`}</Text>
+          <Pressable
+            onPress={() => {
+              setShowDatePicker(value => !value);
+            }}>
+            <Text style={{ fontSize: 20, fontWeight: '600', color: 'blue' }}>
+              {format(dateSelected, 'dd/MM/yyyy')}
+            </Text>
+            {showDatePicker && (
+              <RNDateTimePicker
+                value={dateSelected}
+                mode="date"
+                onChange={onSelectDate}
+                display="inline"
+                locale="vi"
+              />
+            )}
+          </Pressable>
+        </View>
+
         <FlatList
           data={users}
           renderItem={renderItem}

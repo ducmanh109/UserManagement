@@ -95,30 +95,8 @@ const useLogicListUser = () => {
       () => {},
     );
 
-    listUserStore.onGetListUser();
+    // listUserStore.onGetListUser();
   }, []);
-
-  useEffect(() => {
-    setTimeout(() => {
-      PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
-        listScheduledNoti.forEach(scheduledLocal => {
-          const userScheduled = listUserStore?.listUser.find(
-            userInfo => userInfo.id === scheduledLocal.data.userId,
-          );
-
-          if (!userScheduled) {
-            PushNotificationIOS.removePendingNotificationRequests([
-              scheduledLocal.id,
-            ]);
-          }
-        });
-      });
-
-      PushNotification.getScheduledLocalNotifications(listScheduledNoti => {
-        console.log('listScheduledNoti', listScheduledNoti);
-      });
-    }, 2000);
-  }, [listUserStore?.listUser]);
 
   useEffect(() => {
     const onValueChange = database()

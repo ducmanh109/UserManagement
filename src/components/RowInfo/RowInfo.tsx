@@ -28,6 +28,10 @@ const styles = StyleSheet.create({
     paddingVertical: CommonHeights.res16,
     borderBottomColor: Colors.border,
     borderBottomWidth: 1,
+    backgroundColor: 'lightgray',
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    marginBottom: 4,
   },
   leftInfo: {
     fontWeight: '700',

@@ -43,6 +43,29 @@ export const CREATE_USER_STATUS = {
   FAIL: 'FAIL',
 };
 
+export type TimeMaintainType = Array<{
+  year: number;
+  month: {
+    0: boolean;
+    1: boolean;
+    2: boolean;
+    3: boolean;
+    4: boolean;
+    5: boolean;
+    6: boolean;
+    7: boolean;
+    8: boolean;
+    9: boolean;
+    10: boolean;
+    11: boolean;
+  };
+}>;
+
+export type CollectMoneyType = Array<{
+  date: string;
+  money: number;
+}>;
+
 export type USER_INFO_TYPE = {
   detailAddress: string;
   district: string;
@@ -50,10 +73,13 @@ export type USER_INFO_TYPE = {
   phoneNumber: string;
   province: string;
   repeatType: RepeatType;
-  timeToRemind: FirebaseFirestoreTypes.Timestamp;
+  repeatTypeMoney: RepeatType;
+  timeToRemind: any;
+  timeToRemindMoney: any;
   ward: string;
   id: string;
   scheduledTime: any; // for local schedule push
-  time_maintain: string;
+  time_maintain: TimeMaintainType;
   note: string;
+  collectMoneyType: CollectMoneyType;
 };

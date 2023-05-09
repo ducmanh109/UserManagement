@@ -32,12 +32,28 @@ export const userRowInfo = [
     rightKey: 'detailAddress',
   },
   {
-    leftInfo: 'Ngày bắt đầu nhắc',
+    leftInfo: 'Ngày bắt đầu nhắc bảo trì',
     rightKey: 'timeToRemind',
   },
   {
-    leftInfo: 'Nhắc theo',
+    leftInfo: 'Nhắc bảo trì theo',
     rightKey: 'repeatType',
+  },
+  {
+    leftInfo: 'Ngày bắt đầu nhắc thu tiền',
+    rightKey: 'timeToRemindMoney',
+  },
+  {
+    leftInfo: 'Nhắc thu tiền theo',
+    rightKey: 'repeatTypeMoney',
+  },
+  {
+    leftInfo: 'Lịch đã bảo trì',
+    rightKey: 'time_maintain',
+  },
+  {
+    leftInfo: 'Số tền đã thu',
+    rightKey: 'collectMoneyType',
   },
   {
     leftInfo: 'Ghi chú',

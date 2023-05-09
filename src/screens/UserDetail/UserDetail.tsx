@@ -1,21 +1,30 @@
 /* eslint-disable react-native/no-color-literals */
 /* eslint-disable react-native/no-inline-styles */
-import { StyleSheet, Text, ScrollView, View, Pressable } from 'react-native';
+import {
+  StyleSheet,
+  Text,
+  ScrollView,
+  View,
+  Pressable,
+  Alert,
+} from 'react-native';
 import React, { useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import RowInfo from 'components/RowInfo/RowInfo';
 import Colors from 'theme/colors';
-import useLogicUserDetail from './UserDetail.logic';
 import { userRowInfo } from 'data/user/user.mockData';
 import CommonFonts from 'theme/CommonFonts';
 import CommonStyles from 'theme/CommonStyles';
 import Header from 'components/Header/Header';
 import Home from 'screens/Home/Home';
-import { useNavigation } from '@react-navigation/native';
+import { useNavigation, useRoute } from '@react-navigation/native';
 import listUserStore from 'data/userStore/ListUserStore';
 import { observer } from 'mobx-react';
+import TimeMaintain from 'screens/Home/TimeMaintain';
+import CollectMoney from 'screens/Home/CollectMoney';
+import CommonHeights from 'theme/CommonHeights';
 
-const timeLocale = {
+export const timeLocale = {
   minute: 'phút',
   hour: 'giờ',
   day: 'ngày',
@@ -25,7 +34,10 @@ const timeLocale = {
 };
 
 const UserDetail = () => {
-  const { userInfo } = useLogicUserDetail();
+  const route = useRoute<any>();
+
+  const userInfo = route.params?.item;
+
   const navigation = useNavigation();
 
   const [isEdit, setEdit] = useState(false);
@@ -38,9 +50,18 @@ const UserDetail = () => {
   };
 
   const onDeleteUser = (id: string) => {
-    listUserStore.onDeleteUser(id, () => {
-      navigation.goBack();
-    });
+    Alert.alert('Bạn có chắc chắn muốn xoá không?', '', [
+      { style: 'cancel', text: 'Huỷ' },
+      {
+        onPress: () => {
+          listUserStore.onDeleteUser(id, () => {
+            navigation.goBack();
+          });
+        },
+        text: 'Xoá',
+        style: 'destructive',
+      },
+    ]);
   };
 
   const renderRightInfo = (key: any) => {
@@ -51,6 +72,12 @@ const UserDetail = () => {
         return '';
       case 'repeatType':
         return timeLocale[userInfo['repeatType']];
+      case 'timeToRemindMoney':
+        if (userInfo['timeToRemindMoney'])
+          return new Date(userInfo?.timeToRemindMoney).toLocaleString();
+        return '';
+      case 'repeatTypeMoney':
+        return timeLocale[userInfo['repeatTypeMoney']];
       default:
         return userInfo[key];
     }
@@ -85,15 +112,69 @@ const UserDetail = () => {
         {isEdit ? (
           <Home onUpdateSuccess={onUpdateSuccess} userInfoParams={userInfo} />
         ) : (
-          <ScrollView>
+          <ScrollView showsVerticalScrollIndicator={false}>
             {userRowInfo.map(row => {
-              return (
-                <RowInfo
-                  key={row.rightKey}
-                  leftInfo={row.leftInfo}
-                  rightInfo={renderRightInfo(row.rightKey)}
-                />
-              );
+              switch (row.rightKey) {
+                case 'time_maintain':
+                  return (
+                    <View
+                      style={{
+                        backgroundColor: 'lightgray',
+                        borderRadius: 8,
+                        paddingHorizontal: 4,
+                        marginBottom: 4,
+                        paddingBottom: CommonHeights.res16,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '500',
+                          marginTop: 10,
+                        }}
+                        children="Số buổi hoàn thành:"
+                      />
+
+                      <TimeMaintain
+                        setTimeMaintain={() => {}}
+                        timeMaintain={userInfo.time_maintain}
+                        isEdit={false}
+                      />
+                    </View>
+                  );
+                case 'collectMoneyType':
+                  return (
+                    <View
+                      style={{
+                        backgroundColor: 'lightgray',
+                        borderRadius: 8,
+                        paddingHorizontal: 4,
+                        marginBottom: 4,
+                        paddingBottom: CommonHeights.res16,
+                      }}>
+                      <Text
+                        style={{
+                          fontSize: 16,
+                          fontWeight: '500',
+                          marginTop: 10,
+                        }}
+                        children="Thu tiền:"
+                      />
+                      <CollectMoney
+                        onChangeCollectMoney={() => {}}
+                        collectMoney={userInfo.collectMoneyType}
+                        isEdit={false}
+                      />
+                    </View>
+                  );
+                default:
+                  return (
+                    <RowInfo
+                      key={row.rightKey}
+                      leftInfo={row.leftInfo}
+                      rightInfo={renderRightInfo(row.rightKey)}
+                    />
+                  );
+              }
             })}
           </ScrollView>
         )}

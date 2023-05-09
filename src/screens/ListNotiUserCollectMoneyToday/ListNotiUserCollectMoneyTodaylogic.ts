@@ -9,10 +9,10 @@ import listUserStore from 'data/userStore/ListUserStore';
 const fiterUser = (users: USER_INFO_TYPE[], date: Date) => {
   const newListUser = users.filter(user => {
     if (
-      user.timeToRemind &&
-      user.repeatType &&
+      user.timeToRemindMoney &&
+      user.repeatTypeMoney &&
       date.toLocaleDateString() ===
-        new Date(user.timeToRemind as any).toLocaleDateString()
+        new Date(user.timeToRemindMoney as any).toLocaleDateString()
     )
       return true;
 

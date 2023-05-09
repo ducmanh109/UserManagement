@@ -6,6 +6,7 @@ import ListUser from 'screens/ListUser/ListUser';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import Colors from 'theme/colors';
 import ListNotiUserToday from 'screens/ListNotiUserToday/ListNotiUserToday';
+import ListNotiUserCollectMoneyToday from 'screens/ListNotiUserCollectMoneyToday/ListNotiUserCollectMoneyToday';
 
 const Tab = createBottomTabNavigator();
 
@@ -44,7 +45,21 @@ function renderListNotiListIcon(_props: {
 }) {
   return (
     <FontAwesome
-      name="star"
+      name="wrench"
+      size={30}
+      color={_props.focused ? Colors.blue : Colors.black}
+    />
+  );
+}
+
+function renderListNotiUserCollectMoneyTodayIcon(_props: {
+  focused: boolean;
+  color: string;
+  size: number;
+}) {
+  return (
+    <FontAwesome
+      name="money"
       size={30}
       color={_props.focused ? Colors.blue : Colors.black}
     />
@@ -78,6 +93,14 @@ const MainTab = () => {
         component={ListNotiUserToday}
         options={{
           tabBarIcon: renderListNotiListIcon,
+          tabBarShowLabel: false,
+        }}
+      />
+      <Tab.Screen
+        name={ROUTES.NOTI_MONEY_TODAY}
+        component={ListNotiUserCollectMoneyToday}
+        options={{
+          tabBarIcon: renderListNotiUserCollectMoneyTodayIcon,
           tabBarShowLabel: false,
         }}
       />

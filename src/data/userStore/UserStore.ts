@@ -55,10 +55,11 @@ class UserStore {
     console.log('this.createUserStatus', this.createUserStatus);
   }
 
-  *onCreateUser(data: any) {
+  *onCreateUser(data: any, onSuccess?: any) {
     console.log('datadatadatadata', data);
     try {
       listUserStore.onCreateUser(data);
+      onSuccess && onSuccess();
     } catch (error) {
       this.setCreateUserStatus(CREATE_USER_STATUS.FAIL);
 
